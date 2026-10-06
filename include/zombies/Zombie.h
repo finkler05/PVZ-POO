@@ -20,7 +20,7 @@ public:
     void attack(Plant& plant);
     bool isAlive();
 
-
+    void setColumn(double);
     void setHealth(unsigned int health);
     void setDamage(unsigned int damage);
     void setAttackInterval(double attackInterval);
@@ -31,7 +31,7 @@ public:
     unsigned int getRow();
     double getColumn();
     double getTimerZombie();
-    
+    double getSpeed();
 
 
 

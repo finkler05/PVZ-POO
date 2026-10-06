@@ -19,6 +19,8 @@ public:
     bool isUsed();
     void hitZombie(Zombie& zombie);
 
+    unsigned int getRow();
+    double getColumn();
 };
     
 

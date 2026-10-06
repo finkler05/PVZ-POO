@@ -8,10 +8,10 @@ private:
     double height;
     double verticalSpeed;
     double targetColumn;
-
+    double startColumn;
 
 public:
-   Cabbage(unsigned int row, double column);
+   Cabbage(unsigned int row, double column, double targetColumn);
    void update(double deltaTime);
 };
 

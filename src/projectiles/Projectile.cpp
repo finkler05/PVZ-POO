@@ -12,7 +12,7 @@ unsigned int Projectile::getDamage(){
     return damage;
 
 }
-
+//cadê o construor ??
 double Projectile::getColumn(){
     return column;
 }

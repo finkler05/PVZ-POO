@@ -66,3 +66,14 @@ Zombie::Zombie(unsigned int row, double column) : row(row), column(column) {
     void Zombie::setTimerZombie(double timerZombie){
         this->timerZombie = timerZombie;
     }
+
+    void Zombie::setColumn(double){
+        
+        this->column = column;
+
+    }
+
+    double Zombie::getSpeed(){
+
+        return speed;
+    }

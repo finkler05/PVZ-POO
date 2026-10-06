@@ -15,7 +15,7 @@ public:
     Peashooter(unsigned int row, unsigned int column);
     Pea shoot();
     void update(double deltaTime);
-
+    double getAttackInterval();
 
 };
 

@@ -13,7 +13,9 @@ private:
 public:
     Cabbage_Pult(unsigned int row, unsigned int column);
     void update(double deltaTime);
-    Cabbage shoot();    
+    Cabbage shoot(double targetColumn);    
+    double getAttackInterval();
+    unsigned int getRange();
 
 
 
