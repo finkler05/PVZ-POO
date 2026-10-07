@@ -36,7 +36,7 @@ void LawnMower::update(double deltaTime){
     if(active){
         column += speed * deltaTime;
         
-        if(column <= 7.0){
+        if(column >= 7.0){
             active = false;
         }
     }

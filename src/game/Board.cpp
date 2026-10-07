@@ -108,11 +108,15 @@ void Board::checkLawnMowerCollisions(){
                 continue;
 
             }
-            if(mower->isUsed() && zombie->getColumn() <= 0.0){
+            if(!mower->isUsed() && zombie->getColumn() <= 0.0){
 
                 mower->activate();
 
+            }else if(mower->isUsed() && !mower->isActive() && zombie->getColumn() <= 0.0){
+                gameOver = true;
+
             }
+
             if(mower->isActive() && mower->getColumn() >= zombie->getColumn()){
 
                 mower->hitZombie(*zombie);
@@ -125,7 +129,12 @@ void Board::checkLawnMowerCollisions(){
 
 bool Board::hasZombies(){
 
-    return !zombies.empty();
+    for(Zombie* zombie : zombies){
+        if(zombie != nullptr && zombie->isAlive()){
+            return true;
+        }
+    }
+    return false;   
 }
 
 bool Board::isGameOver(){

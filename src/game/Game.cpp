@@ -1,5 +1,7 @@
-#include <Game.h>
+#include <iostream>
 #include <cstdlib>
+
+#include <Game.h>
 
 #include <Normal_Zombie.h>
 #include <Conehead_Zombie.h>
@@ -112,6 +114,16 @@ void Game::spawnZombie(ZombieType type){
 
 void Game::startWave(){
 
+    if(wave >= maxWaves){
+        return;
+    }
+
+    wave++;
+
+    normalToSpawn = 0;
+    coneheadToSpawn = 0;
+    gargantuarToSpawn = 0;
+    
     switch(wave){
     
         case 1: 
@@ -194,6 +206,7 @@ void Game::update(double deltaTime){
 
         spawnTimer = 0.0;
         spawnInterval = 4.0 +(rand() % 4);
+    }
 
         if(waveTimer >= waveInterval || (zombiesToSpawn == 0 && !board.hasZombies()))
         {
@@ -205,11 +218,13 @@ void Game::update(double deltaTime){
 
             } 
         }
+
+        
             checkGameOver();
             checkVictory();
         }
 
-    }
+    
 
 
 
