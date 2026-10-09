@@ -42,6 +42,9 @@ PlantType choosePlant(int choice){
 
 std::mutex gameMutex;
 std::atomic<bool> inputRunning{true};
+std::atomic<bool> playerTyping{false};
+
+
 
 bool gameIsRunning(Game& game){
 
@@ -55,6 +58,7 @@ void playerTurn(Game& game){
     while(inputRunning && gameIsRunning(game)){
         int choice;
         unsigned int row, column;
+        playerTyping = true;
 
         std::cout << "Selecione uma planta desejada: " << std::endl;
         std::cout << "1 = Sunflower / 2 = Peashooter / 3 = Wall-Nut / 4 = Cabbage-Pult / 5 = Potato Mine" << std::endl;
@@ -95,9 +99,32 @@ void playerTurn(Game& game){
                 game.buyPlant(selectedPlant, row, column);
             }
         }
-
+        playerTyping = true;
     }
 }
+
+void renderGame(Game& game){
+    std::lock_guard<std::mutex> lock(gameMutex);
+
+    std::cout << "\033[s";
+    std::cout << "\033[H";
+
+    for(int i = 0; i < 8; i++){
+        std::cout << "\033[2K";
+        if(i < 7){
+            std::cout << "\033[1B";
+
+        }
+    }
+    std::cout << "\033[H";
+
+    game.display();
+    std::cout << "\033[u";
+    std::cout.flush();
+}
+
+
+
 
 
 
@@ -110,17 +137,22 @@ int main(){
 
     game.startWave();
 
+    std::cout << "\033[2J\033[H";
+    for(int i = 0; i < 8; i++){
+        std::cout << std::endl;
+    }
 
     std::cout << "Jogo Iniciado!" << std::endl;
-
     std::cout << "Sois Restantes: " << game.getSun() << std::endl;
 
-    
+    renderGame(game);
     std::thread inputThread(playerTurn, std::ref(game));
 
     
 
     auto lastTime = std::chrono::steady_clock::now();
+
+    double displayTimer = 0.0;
 
     while(gameIsRunning(game)){
 
@@ -133,6 +165,15 @@ int main(){
         {std::lock_guard<std::mutex> lock(gameMutex);
 
         game.update(deltaTime);
+        displayTimer += deltaTime;
+
+        if(displayTimer >= 1.0 && !playerTyping.load()){
+
+            renderGame(game);
+
+            displayTimer = 0.0;
+        }
+
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(16));

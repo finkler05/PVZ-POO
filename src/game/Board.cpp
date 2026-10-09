@@ -1,3 +1,10 @@
+#include <iostream>
+
+#include <Sunflower.h>
+#include <Peashooter.h>
+#include <Cabbage_Pult.h>
+#include <Wall_Nut.h>
+#include <Potato_Mine.h>
 #include <Board.h>
 
 
@@ -165,4 +172,66 @@ void Board::update(double deltaTime){
     }
     checkProjectileCollisions();
     checkLawnMowerCollisions();
+}
+
+void Board::display()const{
+
+    std::cout << "\n     0 1 2 3 4 5 6\n";
+
+    for(unsigned int row = 0; row < 3; row++){
+
+        std::cout << "Linha " << row << " ";
+
+        for(unsigned int column = 0; column < 7; column++){
+
+            bool hasZombies = false;
+
+            for(Zombie* zombie : zombies){
+
+                if(zombie != nullptr && zombie->isAlive()){
+                    if(zombie->getRow() == row && zombie->getColumn() >= column && zombie->getColumn() < column + 1){
+                        hasZombies = true;
+                        break;
+
+                    }
+                }
+            }
+            if(hasZombies){
+                std::cout << "Z ";
+                continue;
+            }
+
+            if(plants[row][column] != nullptr){
+                
+                Plant* plant = plants[row][column];
+
+                if(dynamic_cast<Sunflower*>(plant)){
+                    std::cout << "S ";
+
+                }else if(dynamic_cast<Peashooter*>(plant)){
+                    std::cout << "P ";
+
+                }else if(dynamic_cast<Wall_Nut*>(plant)){
+                    std::cout << "W ";
+
+                }else if(dynamic_cast<Potato_Mine*>(plant)){
+                    std::cout << "M ";
+
+                } else if(dynamic_cast<Cabbage_Pult*>(plant)){
+                    std::cout << "C ";
+
+                }else{
+                    std::cout << "? ";
+                }
+            }else {
+                std::cout << ". ";
+            }
+
+        }
+        std::cout << std::endl;
+    }
+
+
+
+
 }

@@ -267,3 +267,8 @@ void Game::checkVictory(){
         gameOver = false;
     }
 }
+
+void Game::display()const{
+
+    board.display();
+}

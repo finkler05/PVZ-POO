@@ -16,6 +16,7 @@ public:
     void update(double deltaTime);
     void takeDamage(unsigned int damage);
     bool isAlive();
+    virtual ~Plant() = default;
 
     void setHealth(unsigned int health);
     void setTimerPlant(double timerPlant);

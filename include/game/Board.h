@@ -30,7 +30,7 @@ public:
     bool hasZombies();
     bool isGameOver();
     void update(double deltaTime);
-
+    void display() const;
 
 
 

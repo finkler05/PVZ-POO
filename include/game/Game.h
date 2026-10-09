@@ -35,6 +35,7 @@ public:
     bool isGameOver();
     bool hasWon();
     bool buyPlant(PlantType type, unsigned int row, unsigned int column);
+    void display() const;
     
     unsigned int getSun();
     unsigned int getWave();
