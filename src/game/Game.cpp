@@ -95,7 +95,6 @@ bool Game::buyPlant(PlantType type, unsigned int row, unsigned int column){
 void Game::spawnZombie(ZombieType type){
 
     unsigned int row = rand() % 3;
-
     switch(type){
 
         case ZombieType::NORMAL_ZOMBIE:
@@ -177,6 +176,9 @@ void Game::startWave(){
             break;            
     }
     zombiesToSpawn = normalToSpawn + coneheadToSpawn + gargantuarToSpawn;
+    waveTimer = 0.0;
+    spawnTimer = 0.0;
+    spawnInterval = 4.0 + (rand() % 4);
 }
 
 void Game::update(double deltaTime){

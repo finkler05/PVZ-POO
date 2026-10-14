@@ -43,6 +43,8 @@ PlantType choosePlant(int choice){
 std::mutex gameMutex;
 std::atomic<bool> inputRunning{true};
 std::atomic<bool> playerTyping{false};
+std::atomic<bool> needsRender{false};
+
 
 
 
@@ -52,6 +54,7 @@ bool gameIsRunning(Game& game){
 
     return !game.isGameOver() && !game.hasWon();
 }
+void renderGame(Game& game);
 
 void playerTurn(Game& game){
 
@@ -95,11 +98,13 @@ void playerTurn(Game& game){
 
     
         {std::lock_guard<std::mutex> lock(gameMutex);
+            
             if(!game.isGameOver() && !game.hasWon()){
                 game.buyPlant(selectedPlant, row, column);
+                needsRender = true;
             }
         }
-        playerTyping = true;
+        playerTyping = false;
     }
 }
 
@@ -165,16 +170,21 @@ int main(){
         {std::lock_guard<std::mutex> lock(gameMutex);
 
         game.update(deltaTime);
-        displayTimer += deltaTime;
+        }
 
-        if(displayTimer >= 1.0 && !playerTyping.load()){
+        displayTimer += deltaTime;
+//&& !playerTyping.load()
+        if(displayTimer >= 1.0 ){
 
             renderGame(game);
 
             displayTimer = 0.0;
+            
         }
+        //playerTyping = false;
 
-        }
+        //renderGame(game);
+        
 
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }

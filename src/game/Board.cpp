@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include <Sunflower.h>
 #include <Peashooter.h>
@@ -48,12 +49,14 @@ void Board::removePlant(unsigned int row, unsigned int column){
     if(row >= rows || column >= columns){
         return;
     }
+    delete plants[row][column];
 
     plants[row][column] = nullptr;
 }
 
 void Board::addZombie(Zombie* zombie){
     if(zombie != nullptr){
+       
         zombies.push_back(zombie);
     }
 }
@@ -155,7 +158,29 @@ void Board::update(double deltaTime){
         if(zombie != nullptr && zombie->isAlive()){
 
             zombie->update(deltaTime);
-            zombie->setColumn(zombie->getColumn() - zombie->getSpeed() * deltaTime);
+
+            unsigned int row = zombie->getRow();
+            double column = zombie->getColumn();
+
+            bool attacking = false;
+
+            if(row < rows && column >= 0 && column < columns){
+                unsigned int col = static_cast<unsigned int>(column);
+
+                if(plants[row][col] != nullptr){
+                    zombie->attack(*plants[row][col]);
+                    if(!plants[row][col]->isAlive()){
+                        removePlant(row, col);
+                    }
+                        attacking = true;
+                }
+            }
+            if(!attacking){
+                zombie->setColumn(zombie->getColumn() - zombie->getSpeed() * deltaTime);
+                
+            }
+
+            
         }
     }
 
@@ -176,6 +201,11 @@ void Board::update(double deltaTime){
 
 void Board::display()const{
 
+
+    
+   
+
+    
     std::cout << "\n     0 1 2 3 4 5 6\n";
 
     for(unsigned int row = 0; row < 3; row++){
@@ -189,7 +219,11 @@ void Board::display()const{
             for(Zombie* zombie : zombies){
 
                 if(zombie != nullptr && zombie->isAlive()){
+
                     if(zombie->getRow() == row && zombie->getColumn() >= column && zombie->getColumn() < column + 1){
+                        
+                        
+                        
                         hasZombies = true;
                         break;
 

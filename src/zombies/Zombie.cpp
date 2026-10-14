@@ -17,7 +17,7 @@ Zombie::Zombie(unsigned int row, double column) : row(row), column(column) {
     }
 
     void Zombie::setAttackInterval(double attackInterval) {
-    this->attackInterval = attackInterval;
+    this->attackInterval = attackInterval; 
     }
 
     void Zombie::setSpeed(double speed) {
@@ -67,7 +67,7 @@ Zombie::Zombie(unsigned int row, double column) : row(row), column(column) {
         this->timerZombie = timerZombie;
     }
 
-    void Zombie::setColumn(double){
+    void Zombie::setColumn(double column){
         
         this->column = column;
 
