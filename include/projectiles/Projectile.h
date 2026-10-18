@@ -12,7 +12,7 @@ private:
 
 public:
     Projectile(unsigned int damage, unsigned int row, double column, double speed);
-    void update(double deltaTime);
+    virtual void update(double deltaTime);
     bool isActive();
     void deactivate();
 

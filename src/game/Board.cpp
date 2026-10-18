@@ -154,35 +154,67 @@ bool Board::isGameOver(){
 
 void Board::update(double deltaTime){
 
-    for(Zombie* zombie : zombies){
-        if(zombie != nullptr && zombie->isAlive()){
+    for(unsigned int row = 0; row < rows; row++){
+        for(unsigned int col = 0; col < columns; col++){
+            if(plants[row][col] != nullptr){
+                plants[row][col]->update(deltaTime);
 
-            zombie->update(deltaTime);
+                Peashooter* peashooter = dynamic_cast<Peashooter*>(plants[row][col]);
+                if(peashooter != nullptr){
+                    if(peashooter->getTimerPlant() >= peashooter->getAttackInterval()){
+                        
+                        addProjectile(new Pea(peashooter->shoot()));
 
-            unsigned int row = zombie->getRow();
-            double column = zombie->getColumn();
-
-            bool attacking = false;
-
-            if(row < rows && column >= 0 && column < columns){
-                unsigned int col = static_cast<unsigned int>(column);
-
-                if(plants[row][col] != nullptr){
-                    zombie->attack(*plants[row][col]);
-                    if(!plants[row][col]->isAlive()){
-                        removePlant(row, col);
+                        peashooter->setTimerPlant(0.0);
                     }
-                        attacking = true;
                 }
-            }
-            if(!attacking){
-                zombie->setColumn(zombie->getColumn() - zombie->getSpeed() * deltaTime);
-                
-            }
 
-            
+            }
         }
     }
+        for(Zombie* zombie : zombies){
+            if(zombie != nullptr && zombie->isAlive()){
+
+                zombie->update(deltaTime);
+
+                unsigned int row = zombie->getRow();
+                double column = zombie->getColumn();
+
+                bool attacking = false;
+
+                if(row < rows && column >= 0 && column < columns){
+                    unsigned int col = static_cast<unsigned int>(column);
+
+                    if(plants[row][col] != nullptr){
+
+                        Potato_Mine* mine = dynamic_cast<Potato_Mine*>(plants[row][col]);
+                        if(mine != nullptr && mine->isArmed()){
+                            zombie->takeDamage(mine->getDamamge());
+                            removePlant(row, col);
+                            attacking = true;
+
+                        }   else{
+                            zombie->attack(*plants[row][col]);
+
+                                if(!plants[row][col]->isAlive()){
+                                removePlant(row, col);
+                                }
+                            
+                                attacking = true;
+                            }
+                        }
+                        
+                        
+                        
+                }
+                if(!attacking){
+                    zombie->setColumn(zombie->getColumn() - zombie->getSpeed() * deltaTime);
+                    
+                }
+
+                
+            }
+        }
 
     for(Projectile* projectile : projectiles){
         if(projectile != nullptr && projectile->isActive()){
@@ -234,38 +266,71 @@ void Board::display()const{
                 std::cout << "Z ";
                 continue;
             }
+            bool hasProjectile = false;
+            for(Projectile* projetile : projectiles){
+                if(projetile != nullptr && projetile->isActive()){
 
-            if(plants[row][column] != nullptr){
-                
-                Plant* plant = plants[row][column];
-
-                if(dynamic_cast<Sunflower*>(plant)){
-                    std::cout << "S ";
-
-                }else if(dynamic_cast<Peashooter*>(plant)){
-                    std::cout << "P ";
-
-                }else if(dynamic_cast<Wall_Nut*>(plant)){
-                    std::cout << "W ";
-
-                }else if(dynamic_cast<Potato_Mine*>(plant)){
-                    std::cout << "M ";
-
-                } else if(dynamic_cast<Cabbage_Pult*>(plant)){
-                    std::cout << "C ";
-
-                }else{
-                    std::cout << "? ";
+                    if(projetile->getRow() == row && projetile->getColumn() >= column && projetile->getColumn() < column + 1){
+                        hasProjectile = true;
+                        break;
+                    }
                 }
-            }else {
-                std::cout << ". ";
             }
+            if(hasProjectile){
+                std::cout << "o " << std::endl;
+                continue;
+            } 
+                if(plants[row][column] != nullptr){
+                    
+                    Plant* plant = plants[row][column];
 
+                    if(dynamic_cast<Sunflower*>(plant)){
+                        std::cout << "S ";
+
+                    }else if(dynamic_cast<Peashooter*>(plant)){
+                        std::cout << "P ";
+
+                    }else if(dynamic_cast<Wall_Nut*>(plant)){
+                        std::cout << "W ";
+
+                    }else if(Potato_Mine* mine = dynamic_cast<Potato_Mine*>(plant)){
+                        if(mine->isArmed()){
+                            std::cout << "M ";
+                        }   else{
+                            std::cout << "m";
+                        }
+
+
+                    } else if(dynamic_cast<Cabbage_Pult*>(plant)){
+                        std::cout << "C ";
+
+                    }else{
+                        std::cout << "? ";
+                    }
+                }else {
+                    std::cout << ". ";
+                }
+
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
+
+
+
+
+}
+
+unsigned int Board::collectSun(){
+    unsigned int totalSun = 0;
+
+    for(unsigned int row = 0; row < rows; row++){
+        for(unsigned int col = 0; col < columns; col++){
+            Sunflower* sunflower = dynamic_cast<Sunflower*>(plants[row][col]);
+            if(sunflower != nullptr){
+                totalSun += sunflower->produceSun();
+
+            }
+        }
     }
-
-
-
-
+    return totalSun;
 }

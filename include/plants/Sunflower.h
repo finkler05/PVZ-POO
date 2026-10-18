@@ -8,7 +8,7 @@ private:
     
     unsigned int sunProduction;
     double productionInterval;
-    
+    bool firstProduction;
 
 
 public:

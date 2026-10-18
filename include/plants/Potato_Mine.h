@@ -15,6 +15,8 @@ public:
    bool isArmed();
    void update(double deltaTime);
 
+   unsigned int getDamamge() const;
+
 };
 
 #endif// POTATO_MINE_H

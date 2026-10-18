@@ -188,6 +188,11 @@ void Game::update(double deltaTime){
     }
 
     board.update(deltaTime);
+    unsigned int produceSun = board.collectSun();
+
+    if(produceSun > 0){
+        addSun(produceSun);
+    }
 
     waveTimer += deltaTime;
     spawnTimer += deltaTime;
@@ -272,5 +277,9 @@ void Game::checkVictory(){
 
 void Game::display()const{
 
+    std::cout << "\n=========================\n";
+    std::cout << "SOIS: " << sun << "\n";
+    std::cout << "WAVE: " << wave << "/" << maxWaves << "\n";
+    
     board.display();
 }

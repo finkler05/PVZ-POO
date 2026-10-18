@@ -13,7 +13,7 @@ public:
     Plant(unsigned int health, unsigned int price, unsigned int row, 
           unsigned int column, double timerPlant);
 
-    void update(double deltaTime);
+    virtual void update(double deltaTime);
     void takeDamage(unsigned int damage);
     bool isAlive();
     virtual ~Plant() = default;

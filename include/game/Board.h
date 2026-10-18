@@ -31,7 +31,7 @@ public:
     bool isGameOver();
     void update(double deltaTime);
     void display() const;
-
+    unsigned int collectSun();
 
 
 };

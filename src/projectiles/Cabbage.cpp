@@ -1,6 +1,6 @@
 #include <Cabbage.h>
 
-Cabbage::Cabbage(unsigned int row, double column, double targetColumn) : Projectile(40, row, column, 600.0){
+Cabbage::Cabbage(unsigned int row, double column, double targetColumn) : Projectile(40, row, column, 4.0){
 
     height = 0.0;
     this->targetColumn = targetColumn; 
@@ -10,7 +10,7 @@ Cabbage::Cabbage(unsigned int row, double column, double targetColumn) : Project
 
 void Cabbage::update(double deltaTime){
     Projectile::update(deltaTime);
-double middle = (startColumn + targetColumn / 2.0);
+double middle = (startColumn + targetColumn) / 2.0;
 
 if(getColumn() < middle){
     height += verticalSpeed * deltaTime;
