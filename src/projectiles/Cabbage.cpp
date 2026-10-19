@@ -25,3 +25,7 @@ if(getColumn() < middle){
     }
 } 
 
+double Cabbage::getTargetColumn() const{
+    return targetColumn;
+
+}

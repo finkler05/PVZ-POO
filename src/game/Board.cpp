@@ -7,6 +7,8 @@
 #include <Wall_Nut.h>
 #include <Potato_Mine.h>
 #include <Board.h>
+#include <Cabbage.h>
+#include <Pea.h>
 
 
 Board::Board() : rows(3), columns(7), gameOver(false){
@@ -71,28 +73,43 @@ void Board::addProjectile(Projectile* projectile){
 
 void Board::checkProjectileCollisions()
 {
-    for(Projectile* projectile : projectiles)
-    {
-        if(projectile == nullptr || !projectile->isActive())
+        for(Projectile* projectile : projectiles)
         {
+            if(projectile == nullptr || !projectile->isActive())
+            {
+                
+                continue;
+            }
+            Cabbage* cabbage = dynamic_cast<Cabbage*>(projectile);
+                if(cabbage->getColumn() >= cabbage->getTargetColumn()){
+                    
+                    for(Zombie* zombie : zombies)
+                    {
+                        if(zombie == nullptr || !zombie->isAlive())
+                    {
+                        continue;
+                    }
+                    if(zombie->getRow() == cabbage->getRow() && zombie->getColumn() >= cabbage->getTargetColumn() - 0.5 && zombie->getColumn() <= cabbage->getTargetColumn() + 0.5){
+                        zombie->takeDamage(cabbage->getDamage());
+                        break;
+                    }
+                    }
+                cabbage->deactivate();
+
             
-            continue;
-        }
-
-    for(Zombie* zombie : zombies)
-    {
-        if(zombie == nullptr || !zombie->isAlive())
-        {
-            continue;
-        }
-
-        if(projectile->getRow() == zombie->getRow() && projectile->getColumn() >= zombie->getColumn()){
-                zombie->takeDamage(projectile->getDamage());
-                projectile->deactivate();
-                break;
+        }   else{
+            for(Zombie* zombie : zombies){
+                if(zombie == nullptr || !zombie->isAlive()){
+                    continue;
+                }
+                if(projectile->getRow() == zombie->getRow() && projectile->getColumn() >= zombie->getColumn()){
+                    zombie->takeDamage(projectile->getDamage());
+                    projectile->deactivate();
+                    break;
+                }
+            }
             }
         }
-    }
 }
 
 void Board::checkLawnMowerCollisions(){
@@ -168,10 +185,36 @@ void Board::update(double deltaTime){
                         peashooter->setTimerPlant(0.0);
                     }
                 }
+                Cabbage_Pult* cabbagePult = dynamic_cast<Cabbage_Pult*>(plants[row][col]);
+                if(cabbagePult != nullptr){
+                    if(cabbagePult->getTimerPlant() >= cabbagePult->getAttackInterval()){
+                        Zombie* target = nullptr;
 
+                        for(Zombie* zombie : zombies){
+                            if(zombie == nullptr || !zombie->isAlive()){
+                                continue;
+                            }
+                            if(zombie->getRow() != row){
+                                continue;
+                            }
+                            double distance = zombie->getColumn() - col;
+
+                            if(distance >= 0 && distance <= cabbagePult->getRange()){
+                                if(target == nullptr || zombie->getColumn() < target->getColumn()){
+                                    target = zombie;
+                                }
+                            }
+                        }
+                        if(target != nullptr){
+                            addProjectile(new Cabbage(cabbagePult->shoot(target->getColumn())));
+                        }
+                    }
+                }
+                
             }
         }
     }
+
         for(Zombie* zombie : zombies){
             if(zombie != nullptr && zombie->isAlive()){
 
@@ -266,18 +309,25 @@ void Board::display()const{
                 std::cout << "Z ";
                 continue;
             }
-            bool hasProjectile = false;
-            for(Projectile* projetile : projectiles){
-                if(projetile != nullptr && projetile->isActive()){
-
-                    if(projetile->getRow() == row && projetile->getColumn() >= column && projetile->getColumn() < column + 1){
-                        hasProjectile = true;
+            char projectileSymbol = ' ';
+            for(Projectile* projectile : projectiles){
+                if(projectile != nullptr && projectile->isActive()){
+                    if(projectile->getRow() == row && projectile->getColumn() >= column && projectile->getColumn() < column + 1){
+                        if(dynamic_cast<Cabbage*>(projectile) != nullptr){
+                            projectileSymbol = 'O';
+                        }   else{
+                            projectileSymbol = 'o';
+                        }
                         break;
                     }
                 }
-            }
-            if(hasProjectile){
-                std::cout << "o " << std::endl;
+            }    
+
+
+
+
+            if(projectileSymbol != ' '){
+                std::cout << projectileSymbol << " ";
                 continue;
             } 
                 if(plants[row][column] != nullptr){
@@ -297,7 +347,7 @@ void Board::display()const{
                         if(mine->isArmed()){
                             std::cout << "M ";
                         }   else{
-                            std::cout << "m";
+                            std::cout << "m ";
                         }
 
 

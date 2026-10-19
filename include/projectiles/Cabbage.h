@@ -13,6 +13,7 @@ private:
 public:
    Cabbage(unsigned int row, double column, double targetColumn);
    void update(double deltaTime);
+   double getTargetColumn() const;
 };
 
 #endif // CABBAGE_H
