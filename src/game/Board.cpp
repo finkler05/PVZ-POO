@@ -1,5 +1,7 @@
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
+#include <stdexcept>
 
 #include <Sunflower.h>
 #include <Peashooter.h>
@@ -40,6 +42,10 @@ bool Board::placePlant(Plant* plant){
     }
     unsigned int row = plant->getRow();
     unsigned int column = plant->getColumn();
+
+    if(row >= rows || column >= columns){
+        throw std::out_of_range("Posição fora dos limites do Tabuleiro!");
+    }
 
     if(!isEmpty(row, column)){
         return false;
@@ -284,26 +290,32 @@ void Board::update(double deltaTime){
     checkProjectileCollisions();
     checkLawnMowerCollisions();
 
-    for(auto it = zombies.begin(); it != zombies.end();){
-        if(*it == nullptr || !(*it)->isAlive()){
-            delete *it;
-    
-            it = zombies.erase(it);
-        }   else{
-            ++it;
-        }
-    }
-    for(auto it = projectiles.begin(); it != projectiles.end();) {
-        if(*it == nullptr || !(*it)->isActive()){
-            delete *it;
 
-            it = projectiles.erase(it);
-
-        }   else{
-            ++it;
+    zombies.erase(
+        std::remove_if(zombies.begin(), zombies.end(), [](Zombie* zombie)-> bool{
+        
+            if(zombie == nullptr){
+            return true;
         }
+        
+            if(!zombie->isAlive()){
+            delete zombie;
+            return true;
+        }
+        return false;
     }
-}
+),
+    zombies.end()
+
+
+
+
+
+
+
+
+);
+}    
 
 void Board::display()const{
 

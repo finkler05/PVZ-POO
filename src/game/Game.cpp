@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <stdexcept>
 
 #include <Game.h>
 
@@ -84,7 +85,17 @@ bool Game::buyPlant(PlantType type, unsigned int row, unsigned int column){
         return false;
     }
 
-    if(!board.placePlant(plant)){
+    try{
+        if(!board.placePlant(plant)){
+        delete plant;
+        return false;
+    
+
+        }
+    }
+    catch(const std::out_of_range& erro){
+        std::cout << erro.what() << std::endl;
+        
         delete plant;
         return false;
     }
