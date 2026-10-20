@@ -174,7 +174,7 @@ int main(){
 
         displayTimer += deltaTime;
 
-        if(displayTimer >= 1.0 ){
+        if(displayTimer >= 0.2 ){
 
             renderGame(game);
 
@@ -189,6 +189,12 @@ int main(){
     inputRunning = false;
 
     std::cout << "\nJogo Encerrado!" << std::endl;
+    if(game.hasWon()){
+            std::cout << "Você venceu!" << std::endl;
+
+        }   else{
+            std::cout << "Você perdeu!" << std::endl;
+        }
     std::cout << "Se houver uma pergunta pendente, digite um numero e pressione Enter para finalizar." << std::endl;
 
     if(inputThread.joinable()){
@@ -196,12 +202,7 @@ int main(){
         inputThread.join();
 
     }
-        if(game.hasWon()){
-            std::cout << "Você venceu!" << std::endl;
-
-        }   else{
-            std::cout << "Você perdeu!" << std::endl;
-        }
+        
 
 
         

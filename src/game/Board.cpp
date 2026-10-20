@@ -10,6 +10,10 @@
 #include <Cabbage.h>
 #include <Pea.h>
 
+#include <Normal_Zombie.h>
+#include <Conehead_Zombie.h>
+#include <Gargantuar_Zombie.h>
+
 
 Board::Board() : rows(3), columns(7), gameOver(false){
 
@@ -145,7 +149,7 @@ void Board::checkLawnMowerCollisions(){
 
             }
 
-            if(mower->isActive() && mower->getColumn() >= zombie->getColumn()){
+            if(mower->isActive() && zombie->getColumn() >= mower->getColumn() - 0.5 && zombie->getColumn() <= mower->getColumn() + 0.5){
 
                 mower->hitZombie(*zombie);
 
@@ -264,7 +268,6 @@ void Board::update(double deltaTime){
         if(projectile != nullptr && projectile->isActive()){
 
             projectile->update(deltaTime);
-            std::cout << "DEBUG projetil na coluna" << projectile->getColumn() << std::endl;
 
             if(projectile->getColumn() >= columns){
                projectile->deactivate();
@@ -304,34 +307,53 @@ void Board::update(double deltaTime){
 
 void Board::display()const{
 
-    std::cout << "\n     0 1 2 3 4 5 6\n";
+    std::cout << "\n             0 1 2 3 4 5 6\n";
 
     for(unsigned int row = 0; row < 3; row++){
 
         std::cout << "Linha " << row << " ";
 
+        if(lawnMowers[row] != nullptr && !lawnMowers[row]->isUsed()){
+            std::cout << "LM ";
+
+        }   else{
+            std::cout << "-- ";
+        }
+
         for(unsigned int column = 0; column < 7; column++){
 
-            bool hasZombies = false;
+            LawnMower* mower = lawnMowers[row];
+            if(mower != nullptr && mower->isActive()){
+                if(static_cast<unsigned int>(mower->getColumn()) == column){
+
+                    std::cout << "LM";
+                    continue;
+                }
+            }
+
+
+            char zombieSymbol = ' ';
 
             for(Zombie* zombie : zombies){
-
                 if(zombie != nullptr && zombie->isAlive()){
-
                     if(zombie->getRow() == row && zombie->getColumn() >= column && zombie->getColumn() < column + 1){
-                        
-                        
-                        
-                        hasZombies = true;
-                        break;
+                        if(dynamic_cast<Gargantuar_Zombie*>(zombie) != nullptr){
+                            zombieSymbol = 'G';
+                        }   else if(dynamic_cast<Conehead_Zombie*>(zombie) != nullptr){
+                            zombieSymbol = 'C';
 
+                        }   else{
+                            zombieSymbol = 'Z';
+                        }
+                        break;
                     }
                 }
             }
-            if(hasZombies){
-                std::cout << "Z ";
+            if(zombieSymbol != ' '){
+                std::cout << zombieSymbol << " ";
                 continue;
             }
+            
             char projectileSymbol = ' ';
 
             for(Projectile* projectile : projectiles){

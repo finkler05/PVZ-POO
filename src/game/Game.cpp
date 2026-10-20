@@ -176,7 +176,7 @@ void Game::startWave(){
             break;            
     }
     zombiesToSpawn = normalToSpawn + coneheadToSpawn + gargantuarToSpawn;
-    waveTimer = 10.0;
+    waveTimer = 0.0;
     spawnTimer = 0.0;
     spawnInterval = 4.0 + (rand() % 4);
 }
@@ -198,21 +198,27 @@ void Game::update(double deltaTime){
     spawnTimer += deltaTime;
 
     if(zombiesToSpawn > 0 && spawnTimer >= spawnInterval){
-        if(gargantuarToSpawn > 0){
-            spawnZombie(ZombieType::GARGANTUAR_ZOMBIE);
-            gargantuarToSpawn--;
-        } else if(coneheadToSpawn > 0){
+
+        unsigned int randomZombie = rand() % zombiesToSpawn;
+
+        if(randomZombie < normalToSpawn){
+
+            spawnZombie(ZombieType::NORMAL_ZOMBIE);
+            normalToSpawn--;
+
+        }   else if(randomZombie < normalToSpawn + coneheadToSpawn){
             spawnZombie(ZombieType::CONEHEAD_ZOMBIE);
             coneheadToSpawn--;
 
-        } else if(normalToSpawn > 0){
-            spawnZombie(ZombieType::NORMAL_ZOMBIE);
-            normalToSpawn--;
+        }   else{
+            spawnZombie(ZombieType::GARGANTUAR_ZOMBIE);
+            gargantuarToSpawn--;
         }
         zombiesToSpawn--;
 
         spawnTimer = 0.0;
         spawnInterval = 4.0 +(rand() % 4);
+
     }
 
         if(waveTimer >= waveInterval || (zombiesToSpawn == 0 && !board.hasZombies()))
@@ -269,9 +275,9 @@ void Game::checkGameOver(){
 
 void Game::checkVictory(){
 
-    if(wave == maxWaves && zombiesToSpawn == 0 && !board.hasZombies()){
+    if(!gameOver && wave == maxWaves && zombiesToSpawn == 0 && !board.hasZombies()){
         victory = true;
-        gameOver = false;
+        gameOver = true;
     }
 }
 

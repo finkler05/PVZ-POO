@@ -1,7 +1,7 @@
 #include <LawnMower.h>
 
 
-LawnMower::LawnMower(unsigned int row) : row(row), column(0.0), speed(4.0), active(false), used(false){
+LawnMower::LawnMower(unsigned int row) : row(row), column(0.0), speed(1.0), active(false), used(false){
 
 
 }
