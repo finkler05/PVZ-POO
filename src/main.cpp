@@ -173,7 +173,7 @@ int main(){
         }
 
         displayTimer += deltaTime;
-//&& !playerTyping.load()
+
         if(displayTimer >= 1.0 ){
 
             renderGame(game);
@@ -181,9 +181,6 @@ int main(){
             displayTimer = 0.0;
             
         }
-        //playerTyping = false;
-
-        //renderGame(game);
         
 
         std::this_thread::sleep_for(std::chrono::milliseconds(16));

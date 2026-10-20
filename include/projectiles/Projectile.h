@@ -15,6 +15,7 @@ public:
     virtual void update(double deltaTime);
     bool isActive();
     void deactivate();
+    virtual ~Projectile() = default;
 
     unsigned int getDamage();
     unsigned int getRow();

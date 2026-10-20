@@ -1,3 +1,6 @@
+#include <iostream>
+
+
 #include <Pea.h>
 #include <Peashooter.h>
 
@@ -8,7 +11,9 @@ Peashooter::Peashooter(unsigned int row, unsigned int column) : Plant(300, 100, 
 }
 
 Pea Peashooter::shoot(){
-    return Pea(getRow(), getColumn());
+    Pea pea(getRow(), getColumn());
+    return pea;
+
 
 }
 

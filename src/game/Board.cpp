@@ -81,6 +81,7 @@ void Board::checkProjectileCollisions()
                 continue;
             }
             Cabbage* cabbage = dynamic_cast<Cabbage*>(projectile);
+            if(cabbage != nullptr){
                 if(cabbage->getColumn() >= cabbage->getTargetColumn()){
                     
                     for(Zombie* zombie : zombies)
@@ -95,7 +96,7 @@ void Board::checkProjectileCollisions()
                     }
                     }
                 cabbage->deactivate();
-
+                }
             
         }   else{
             for(Zombie* zombie : zombies){
@@ -263,8 +264,15 @@ void Board::update(double deltaTime){
         if(projectile != nullptr && projectile->isActive()){
 
             projectile->update(deltaTime);
+            std::cout << "DEBUG projetil na coluna" << projectile->getColumn() << std::endl;
+
+            if(projectile->getColumn() >= columns){
+               projectile->deactivate();
+            }
         }
     }
+    
+
     for(unsigned int i = 0; i < rows; i++){
         if(lawnMowers[i] != nullptr && lawnMowers[i]->isActive()){
             lawnMowers[i]->update(deltaTime);
@@ -272,15 +280,30 @@ void Board::update(double deltaTime){
     }
     checkProjectileCollisions();
     checkLawnMowerCollisions();
+
+    for(auto it = zombies.begin(); it != zombies.end();){
+        if(*it == nullptr || !(*it)->isAlive()){
+            delete *it;
+    
+            it = zombies.erase(it);
+        }   else{
+            ++it;
+        }
+    }
+    for(auto it = projectiles.begin(); it != projectiles.end();) {
+        if(*it == nullptr || !(*it)->isActive()){
+            delete *it;
+
+            it = projectiles.erase(it);
+
+        }   else{
+            ++it;
+        }
+    }
 }
 
 void Board::display()const{
 
-
-    
-   
-
-    
     std::cout << "\n     0 1 2 3 4 5 6\n";
 
     for(unsigned int row = 0; row < 3; row++){
@@ -310,7 +333,10 @@ void Board::display()const{
                 continue;
             }
             char projectileSymbol = ' ';
+
             for(Projectile* projectile : projectiles){
+
+
                 if(projectile != nullptr && projectile->isActive()){
                     if(projectile->getRow() == row && projectile->getColumn() >= column && projectile->getColumn() < column + 1){
                         if(dynamic_cast<Cabbage*>(projectile) != nullptr){

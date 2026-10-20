@@ -19,6 +19,7 @@ public:
     void takeDamage(unsigned int damage);
     void attack(Plant& plant);
     bool isAlive();
+    virtual ~Zombie() = default;
 
     void setColumn(double);
     void setHealth(unsigned int health);

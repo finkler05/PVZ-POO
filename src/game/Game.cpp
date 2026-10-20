@@ -176,7 +176,7 @@ void Game::startWave(){
             break;            
     }
     zombiesToSpawn = normalToSpawn + coneheadToSpawn + gargantuarToSpawn;
-    waveTimer = 0.0;
+    waveTimer = 10.0;
     spawnTimer = 0.0;
     spawnInterval = 4.0 + (rand() % 4);
 }
