@@ -16,8 +16,8 @@ private:
 public:
     Zombie(unsigned int row, double column);
     void update(double deltaTime);
-    void takeDamage(unsigned int damage);
-    void attack(Plant& plant);
+    virtual void takeDamage(unsigned int damage);
+    virtual void attack(Plant& plant);
     bool isAlive();
     virtual ~Zombie() = default;
 

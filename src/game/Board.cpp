@@ -26,7 +26,18 @@ Board::Board() : rows(3), columns(7), gameOver(false){
         lawnMowers[row] = new LawnMower(row);
     }
 }
-
+Board::~Board(){
+    for(unsigned int row = 0; row < rows; row++){
+        delete lawnMowers[row];
+    
+    }
+    for(Zombie* zombie : zombies){
+        delete zombie;
+    }
+    for(Projectile* projectile : projectiles){
+        delete projectile;
+    }
+}
 bool Board::isEmpty(unsigned int row, unsigned int column){
     if(row >= rows || column >= columns){
         return false;

@@ -20,6 +20,7 @@ private:
 
 public:
     Board();
+    ~Board();
     bool isEmpty(unsigned int row, unsigned int column);
     bool placePlant(Plant* plant);
     void removePlant(unsigned int row, unsigned int column);
