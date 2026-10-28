@@ -26,15 +26,18 @@ SOURCES = 	src/main.cpp \
 			src/game/LawnMower.cpp \
 			src/game/Game.cpp 
 			
+.PHONY: compile run clean
 
 compile:
+			
 			$(CXX) $(CXXFLAGS) $(INCLUDES) $(SOURCES) -o $(TARGET)
 
 
 
 clean:
-		
+			rm -f $(TARGET)
+
 
 run:
 
-	./$(TARGET)
+			./$(TARGET)

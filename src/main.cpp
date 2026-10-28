@@ -60,7 +60,7 @@ void playerTurn(Game& game){
 
     while(inputRunning && gameIsRunning(game)){
         int choice;
-        unsigned int row, column;
+        int row, column;
         playerTyping = true;
 
         std::cout << "Selecione uma planta desejada: " << std::endl;
@@ -68,10 +68,16 @@ void playerTurn(Game& game){
         if(!(std::cin >> choice)){
             break;
             
-        } // Verifica e encerra o while, para caso entrada inválida.
+        }
 
         if(choice == 0){
             break;
+        }
+        if(choice < 1 || choice > 5){
+            std::cout << "Escolha inválida! Escolha uma planta de 1 a 5." << std::endl;
+            playerTyping = false;
+            continue;
+            
         }
 
         if(!inputRunning || !gameIsRunning(game)){
@@ -91,6 +97,11 @@ void playerTurn(Game& game){
         std::cout << "Selecione a coluna onde deseja plantar: " << std::endl;
         if(!(std::cin >> column)){
             break;
+        }
+        if(row < 0 || row >= 3 || column < 0 || column >= 7){
+            std::cout << "Posição inválida! Linha de 0 a 2 / Coluna de 0 a 6." << std::endl;
+            playerTyping = false;
+            continue;
         }
         if(!inputRunning || !gameIsRunning(game)){
             break;
