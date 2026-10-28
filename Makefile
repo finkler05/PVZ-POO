@@ -25,7 +25,16 @@ SOURCES = 	src/main.cpp \
 			src/game/Board.cpp \
 			src/game/LawnMower.cpp \
 			src/game/Game.cpp 
-			
+
+GRAPHICS_TARGET = pvz_graphics
+
+GRAPHICS_SOURCES = $(filter-out src/main.cpp,$(SOURCES)) src/graphics_test.cpp
+
+SFML_CFLAGS = -DSFML_STATIC $(shell PKG_CONFIG_PATH=/usr/local/lib/pkgconfig pkg-config --cflags sfml-graphics)
+
+SFML_LIBS = /usr/local/lib/libsfml-graphics-s.a /usr/local/lib/libsfml-window-s.a /usr/local/lib/libsfml-system-s.a $(shell PKG_CONFIG_PATH=/usr/local/lib/pkgconfig pkg-config --libs --static sfml-graphics | sed 's/-lsfml-graphics//g; s/-lsfml-window//g; s/-lsfml-system//g')
+SFML_LIBS += -lX11 -lXrandr -lXcursor -lXi -ludev
+
 .PHONY: compile run clean
 
 compile:
@@ -41,3 +50,12 @@ clean:
 run:
 
 			./$(TARGET)
+
+graphics:
+
+			$(CXX) $(CXXFLAGS) $(INCLUDES) $(GRAPHICS_SOURCES) $(SMFL_CFLAGS) -o $(GRAPHICS_TARGET) $(SFML_LIBS)
+
+
+
+run-graphics:
+			./$(GRAPHICS_TARGET)

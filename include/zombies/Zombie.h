@@ -1,6 +1,7 @@
 #ifndef ZOMBIE_H
 #define ZOMBIE_H
 
+#include<enum.h>
 #include <Plant.h>
 
 class Zombie {
@@ -15,6 +16,7 @@ private:
 
 public:
     Zombie(unsigned int row, double column);
+    
     void update(double deltaTime);
     virtual void takeDamage(unsigned int damage);
     virtual void attack(Plant& plant);
@@ -33,7 +35,7 @@ public:
     double getColumn();
     double getTimerZombie();
     double getSpeed();
-
+    virtual ZombieType getType() const = 0;
 
 
 

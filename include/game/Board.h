@@ -33,6 +33,12 @@ public:
     void update(double deltaTime);
     void display() const;
     unsigned int collectSun();
+    LawnMower* getLawnMower(unsigned int row);
+    const std::vector<Zombie*>& getZombies() const;
+    const std::vector<Projectile*>& getProjectiles() const;
+
+    Plant* getPlant(unsigned int row, unsigned int column) const;
+
 
 
 };

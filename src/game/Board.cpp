@@ -455,3 +455,26 @@ unsigned int Board::collectSun(){
     }
     return totalSun;
 }
+
+LawnMower* Board::getLawnMower(unsigned int row){
+    if(row >= rows){
+        return nullptr;
+
+    }
+    return lawnMowers[row];
+}
+
+const std::vector<Zombie*>& Board::getZombies() const{
+    return zombies;
+}
+
+Plant* Board::getPlant(unsigned int row, unsigned int column) const {
+    if(row >= rows || column >= columns){
+        return nullptr;
+    }
+    return plants[row][column];
+}
+
+const std::vector<Projectile*>& Board::getProjectiles() const {
+    return projectiles;
+}

@@ -1,6 +1,27 @@
+#include <Board.h>
+#include <LawnMower.h>
+#include <Game.h>
+#include <enum.h>
+
+#include <Cabbage_Pult.h>
+#include <Peashooter.h>
+#include <Potato_Mine.h>
+#include <Wall_Nut.h>
+#include <Sunflower.h>
+
+#include <Pea.h>
+#include <Cabbage.h>
+#include <Projectile.h>
+
+#include <Normal_Zombie.h>
+#include <Conehead_Zombie.h>
+#include <Gargantuar_Zombie.h>
+
+
 #include <vector>
 #include <algorithm>
 #include <iostream>
+
 
 #include <SFML/Graphics.hpp>
 
@@ -34,7 +55,7 @@ struct LawnMowerData{
 
     
 };
-enum class ZombieType { 
+enum class GraphicZombieType { 
         Normal,
         ConeHead,
         Gargantuar
@@ -44,7 +65,7 @@ struct ZombieData {
         float x;
         int row;
         float health;
-        ZombieType type;
+        GraphicZombieType type;
 
         float coneHealth = 0.0f;
         float attackTimer = 0.0f;
@@ -52,7 +73,12 @@ struct ZombieData {
 
     int main(){
 
-        sf::RenderWindow window(sf::VideoMode({800, 600}), "Plants vs Zombies");
+
+        Game game;
+        Board& board = game.getBoard();
+
+
+        sf::RenderWindow window(sf::VideoMode({800, 700}), "Plants vs Zombies");
         window.setVisible(true);
         window.requestFocus();
         
@@ -65,25 +91,31 @@ struct ZombieData {
 
         const float cellSize = 90.0f;
         const float startX = 85.0f;
-        const float startY = 150.0f;
+        const float startY = 220.0f;
         int plants[3][7] = {};
         float plantsHealth[3][7] = {};
         float sunflowerTimer[3][7] = {};
         float sunflowerGlow[3][7] = {};
         float potatoTimer[3][7] = {};
         int selectedPlant = 1;
+        PlantType selectedType = PlantType::SUNFLOWER;
         int suns = 150;
         const int plantCosts[6] = {0, 50, 100, 50, 100, 25};
         int currentWave = 1;
         GameState gameState = GameState::Playing;
         const int maxWaves = 10;
-        std::vector<ZombieData> zombies = {{startX + 6 * cellSize + 20.0f, 0, 270.0f, ZombieType::Normal}, {startX + 6 * cellSize + 20.0f, 1, 270.0f, ZombieType::ConeHead, 370.0f}, {startX + 6 * cellSize + 20.0f, 2, 3000.0f, ZombieType::Gargantuar}};
+        std::vector<ZombieData> zombies = {{startX + 6 * cellSize + 20.0f, 0, 270.0f, GraphicZombieType::Normal}, {startX + 6 * cellSize + 20.0f, 1, 270.0f, GraphicZombieType::ConeHead, 370.0f}, {startX + 6 * cellSize + 20.0f, 2, 3000.0f, GraphicZombieType::Gargantuar}};
 
         std::vector<PeaData> peas;
         std::vector<CabbageData> cabbages;
+
         std::vector<LawnMowerData> lawnMowers;
         for(int row = 0; row < rows; row++){
-            lawnMowers.push_back({startX - 65.0f, row, false, false});
+            LawnMower* mower = board.getLawnMower(row);
+
+            if(mower != nullptr){
+                lawnMowers.push_back({startX - 65.0f + static_cast<float>(mower->getColumn()) * cellSize, row, mower->isActive(), mower->isUsed()});
+            }
         }
 
         float cabbageTimer[3][7] = {};
@@ -101,6 +133,30 @@ struct ZombieData {
             if(gameState != GameState::Playing){
                 deltaTime = 0.0f;
             }
+            if(gameState == GameState::Playing){
+                game.update(static_cast<double>(deltaTime));
+                suns = static_cast<int>(game.getSun());
+            }
+            static int lastPlantCount = -1;
+            int plantCount = 0;
+            for(int row = 0; row < rows; row++){
+                for(int col = 0; col < columns; col++){
+                    if(board.getPlant(row, col) != nullptr){
+                        plantCount++;
+                    }
+                }
+            }
+            if(plantCount != lastPlantCount){
+                std::cout << "Plantas no Board: " << plantCount << std::endl;
+                lastPlantCount = plantCount;
+            }
+            static int lastQuantity = -1;
+            const auto& originalZombies = board.getZombies();
+            int currentQuantity = static_cast<int>(originalZombies.size());
+            if(currentQuantity != lastQuantity){
+                std::cout << "Zombies no Board: " << currentQuantity << std::endl;
+                lastQuantity = currentQuantity;
+            }
             for(int row = 0; row < rows; row++){
                 for(int column = 0; column < columns; column++){
                     if(plants[row][column] == 5){
@@ -113,20 +169,20 @@ struct ZombieData {
                     }
                 }
             }
-            for(int row = 0; row < 3; row++){
-                for(int column = 0; column < 7; column++){
+            for(int row = 0; row < rows; row++){
+                for(int column = 0; column < columns; column++){
                     if(sunflowerGlow[row][column] > 0.0f){
                         sunflowerGlow[row][column] -= deltaTime;
                     }
-                    if(plants[row][column] == 1){
-                        sunflowerTimer[row][column] += deltaTime;
-                        if(sunflowerTimer[row][column] >= 12.0f){
-                            suns += 50;
-                            sunflowerTimer[row][column] -= 12.0f;
+                    Sunflower* sunflower = dynamic_cast<Sunflower*>(board.getPlant(row, column));
+
+                    if(sunflower != nullptr){
+                        float timer = static_cast<float>(sunflower->getTimerPlant());
+                        static float previousTimer[3][7] = {};
+                        if(timer < previousTimer[row][column]){
                             sunflowerGlow[row][column] = 0.5f;
                         }
-                    }   else{
-                        sunflowerTimer[row][column] = 0.0f;
+                        previousTimer[row][column] = timer;
                     }
                 }
             }
@@ -258,14 +314,19 @@ struct ZombieData {
                 if(const auto* key = event->getIf<sf::Event::KeyPressed>()){
                     if(key->code == sf::Keyboard::Key::Num1){
                         selectedPlant = 1;
+                        selectedType = PlantType::SUNFLOWER;
                     }   else if(key->code == sf::Keyboard::Key::Num2){
                         selectedPlant = 2;
+                        selectedType = PlantType::PEASHOOTER;
                     }   else if(key->code == sf::Keyboard::Key::Num3){
                         selectedPlant = 3;
+                        selectedType = PlantType::WALL_NUT;
                     }   else if(key->code == sf::Keyboard::Key::Num4){
                         selectedPlant = 4;
+                        selectedType = PlantType::POTATO_MINE;
                     }   else if(key->code == sf::Keyboard::Key::Num5){
                         selectedPlant = 5;
+                        selectedType = PlantType::CABBAGE_PULT;
                     }
                     if(key->code == sf::Keyboard::Key::V){
                         gameState = GameState::Won;
@@ -283,10 +344,9 @@ struct ZombieData {
                         int column = (mouse->position.x - startX) / cellSize;
                         int row = (mouse->position.y - startY) / cellSize;
                         if(mouse->position.x >= startX && mouse->position.y >= startY && column >= 0 && column < columns && row >= 0 && row < rows){
-                            if(plants[row][column] == 0 && suns >= plantCosts[selectedPlant]){
+                            if(game.buyPlant(selectedType, row, column)){
                                 plants[row][column] = selectedPlant;
-                                suns -= plantCosts[selectedPlant];
-
+                                suns = static_cast<int>(game.getSun());
                                 if(selectedPlant == 3){
                                     plantsHealth[row][column] = 4000.0f;
 
@@ -310,11 +370,51 @@ struct ZombieData {
             sunText.setPosition({90.0f, 30.0f});
             window.draw(sunText);
 
-            sf::Text waveText(font, "Wave " + std::to_string(currentWave) + "/" + std::to_string(maxWaves), 26);
+            sf::Text waveText(font, "Wave " + std::to_string(game.getWave()) + "/" + std::to_string(maxWaves), 26);
             waveText.setFillColor(sf::Color::White);
             waveText.setPosition({550.0f, 30.0f});
             window.draw(waveText);
 
+            const char* plantNames [6] = {
+                " ", "Sunflower", "Peashooter", "Wall-Nut", "Potato Mine", "Cabbage Pult"
+            };
+            for(int i = 1; i < 6; i++){
+                float x = 85.0f + (i - 1) * 125.0f;
+                float y = 115.0f;
+
+                sf::RectangleShape card({115.0f, 95.0f});
+                card.setPosition({x, y});
+
+                if(selectedPlant == i){
+                    card.setFillColor(sf::Color(185, 220, 145));
+                    card.setOutlineColor(sf::Color::Yellow);
+                    card.setOutlineThickness(4.0f);
+
+                }   else{
+                    card.setFillColor(sf::Color(75, 110, 65));
+                    card.setOutlineColor(sf::Color::Black);
+                    card.setOutlineThickness(2.0f);
+                }
+                window.draw(card);
+
+                sf::Text name(font, plantNames[i], 13);
+                name.setPosition({x + 8.0f, y + 12.0f});
+                name.setFillColor(sf::Color::White);
+                window.draw(name);
+
+                sf::Text key(font, std::to_string(i), 20);
+                sf::FloatRect bounds = key.getLocalBounds();
+                key.setOrigin({bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f});
+                key.setPosition({x + 115.0f / 2.0f, y + 95.0f / 2.0f});
+                key.setFillColor(sf::Color::Yellow);
+                window.draw(key);
+
+                sf::Text cost(font, std::to_string(plantCosts[i]) + " sois", 12);
+                cost.setPosition({x + 12.0f, y + 70.0f});
+                cost.setFillColor(sf::Color::White);
+                window.draw(cost);
+
+            }
             for(int row = 0; row < rows; row++){
                 for(int column = 0; column < columns; column++){
 
@@ -564,12 +664,17 @@ struct ZombieData {
             }
             }
         }
-        for(const auto& mower : lawnMowers){
-            if(mower.used && !mower.active){
+        for(int row = 0; row < rows; row++){
+            LawnMower* mower = board.getLawnMower(row);
+            if(mower == nullptr){
                 continue;
             }
-            float x  = mower.x;
-            float y = startY + mower.row * cellSize + 30.0f;
+
+            if(mower->isUsed() && !mower->isActive()){
+                continue;
+            }
+            float x = startX - 65.0f + static_cast<float>(mower->getColumn()) * cellSize; 
+            float y = startY + mower->getRow() * cellSize + 30.0f;
 
             sf::RectangleShape body({48.0f, 28.0f});
             body.setFillColor(sf::Color(200, 35, 25));
@@ -598,10 +703,21 @@ struct ZombieData {
             window.draw(handle);
         }
 
-        for(const auto& pea : peas){
+        for(Projectile* projectile : board.getProjectiles()){
+            if(projectile == nullptr || !projectile->isActive()){
+                continue;
+            }
+            Pea* pea = dynamic_cast<Pea*>(projectile);
+            if(pea == nullptr){
+                continue;
+            }
+
+            float x = startX + static_cast<float>(pea->getColumn()) * cellSize; 
+            float y = startY + static_cast<float>(pea->getRow()) * cellSize + 35.0f;
+
             sf::CircleShape peaShape(11.0f);
             peaShape.setFillColor(sf::Color(0, 255, 0));
-            peaShape.setPosition({pea.x, pea.y});
+            peaShape.setPosition({x, y});
             window.draw(peaShape);
 
         }
@@ -629,7 +745,7 @@ struct ZombieData {
             float x = zombie.x;
             float y = startY + zombie.row * cellSize;
 
-            if(zombie.type == ZombieType::Normal || zombie.type == ZombieType::ConeHead){
+            if(zombie.type == GraphicZombieType::Normal || zombie.type == GraphicZombieType::ConeHead){
 
             sf::RectangleShape leftLeg({10.0f, 24.0f});
             leftLeg.setFillColor(sf::Color(55, 65, 100));
@@ -694,7 +810,7 @@ struct ZombieData {
             window.draw(mouth);
 
 
-            if(zombie.type == ZombieType::ConeHead &&
+            if(zombie.type == GraphicZombieType::ConeHead &&
             zombie.coneHealth > 0.0f){
 
                 sf::CircleShape cone(23.0f, 3);
@@ -709,7 +825,7 @@ struct ZombieData {
                 stripe.setPosition({x + 15.0f, y + 4.0f});
                 window.draw(stripe);
             }
-        }   else if(zombie.type == ZombieType::Gargantuar){
+        }   else if(zombie.type == GraphicZombieType::Gargantuar){
 
                 sf::RectangleShape leftLeg({19.0f, 30.0f});
                 leftLeg.setFillColor(sf::Color(65, 65, 85));

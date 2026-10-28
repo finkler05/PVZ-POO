@@ -13,6 +13,10 @@ unsigned int coneHealth;
 public:
 
 Conehead_Zombie(unsigned int row);
+ZombieType getType() const override {
+    return ZombieType::CONEHEAD_ZOMBIE;
+}
+
 void takeDamage(unsigned int damage) ;
 
 };

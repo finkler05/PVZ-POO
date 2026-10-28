@@ -10,6 +10,10 @@ private:
 
 public:
     Normal_Zombie(unsigned int row);
+
+    ZombieType getType() const override {
+        return ZombieType::NORMAL_ZOMBIE;
+    }
     
 
 };

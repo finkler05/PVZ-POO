@@ -1,7 +1,7 @@
 #include <Sunflower.h>
 
 
-Sunflower::Sunflower(unsigned int row, unsigned column) : Plant(300, 50, row, column, 0.0), sunProduction(50), productionInterval(17.0), firstProduction(false)
+Sunflower::Sunflower(unsigned int row, unsigned column) : Plant(300, 50, row, column, 0.0), sunProduction(50), productionInterval(12.0), firstProduction(false)
 {
 }
 

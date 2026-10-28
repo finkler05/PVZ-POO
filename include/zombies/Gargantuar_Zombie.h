@@ -12,6 +12,9 @@ private:
 
 public:
     Gargantuar_Zombie(unsigned int row);
+    ZombieType getType() const override{
+        return ZombieType::GARGANTUAR_ZOMBIE;
+    }
     void attack(Plant& plant);
 };
 
