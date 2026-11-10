@@ -28,6 +28,13 @@ Board::Board() : rows(3), columns(7), gameOver(false){
 }
 Board::~Board(){
     for(unsigned int row = 0; row < rows; row++){
+        for(unsigned int col = 0; col < columns; col++){
+            delete plants[row][col];
+            plants[row][col] = nullptr;
+        }
+    }
+
+    for(unsigned int row = 0; row < rows; row++){
         delete lawnMowers[row];
     
     }
@@ -317,14 +324,21 @@ void Board::update(double deltaTime){
     }
 ),
     zombies.end()
+);
 
+    projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(), [](Projectile* projectile) -> bool{
+        if(projectile == nullptr){
+            return true;
+        }
+        if(!projectile->isActive()){
+            delete projectile;
+            return true;
+        }
+        return false;
 
-
-
-
-
-
-
+    }
+),
+    projectiles.end()
 );
 }    
 

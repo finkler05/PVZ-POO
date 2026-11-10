@@ -1,4 +1,4 @@
-    #ifndef GARGANTUAR_ZOMBIE_H
+#ifndef GARGANTUAR_ZOMBIE_H
 #define GARGANTUAR_ZOMBIE_H
 
 #include <Zombie.h>
@@ -15,7 +15,7 @@ public:
     ZombieType getType() const override{
         return ZombieType::GARGANTUAR_ZOMBIE;
     }
-    void attack(Plant& plant);
+    void attack(Plant& plant) override;
 };
 
 #endif

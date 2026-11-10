@@ -8,7 +8,7 @@ private:
     
 
 public:
-    Pea(unsigned int row, unsigned int column);
+    Pea(unsigned int row, unsigned int column, int damage);
 
 };
 

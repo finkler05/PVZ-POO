@@ -113,9 +113,10 @@ void Game::spawnZombie(ZombieType type){
             break;
         
         case ZombieType::CONEHEAD_ZOMBIE:
+        {
             board.addZombie(new Conehead_Zombie(row));
             break;
-            
+        }
         case ZombieType::GARGANTUAR_ZOMBIE:
             board.addZombie(new Gargantuar_Zombie(row));
             break;    
@@ -129,6 +130,7 @@ void Game::startWave(){
     }
 
     wave++;
+    
 
     normalToSpawn = 0;
     coneheadToSpawn = 0;
@@ -186,6 +188,7 @@ void Game::startWave(){
             gargantuarToSpawn = 2;
             break;            
     }
+    std::cout << "Game.cpp ativo - Wave: " << wave << " Normais" <<  normalToSpawn << " Coneheads" << coneheadToSpawn << " Gargantuar" << gargantuarToSpawn << std::endl;
     zombiesToSpawn = normalToSpawn + coneheadToSpawn + gargantuarToSpawn;
     waveTimer = 0.0;
     spawnTimer = 0.0;

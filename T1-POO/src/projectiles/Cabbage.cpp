@@ -1,6 +1,6 @@
 #include <Cabbage.h>
 
-Cabbage::Cabbage(unsigned int row, double column, double targetColumn) : Projectile(40, row, column, 4.0){
+Cabbage::Cabbage(unsigned int row, double column, double targetColumn, int damage) : Projectile(damage, row, column, 4.0){
 
     height = 0.0;
     this->targetColumn = targetColumn; 
@@ -28,4 +28,8 @@ if(getColumn() < middle){
 double Cabbage::getTargetColumn() const{
     return targetColumn;
 
+}
+
+double Cabbage::getHeight() const {
+    return height;
 }

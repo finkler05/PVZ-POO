@@ -44,7 +44,7 @@ compile:
 
 
 clean:
-			rm -f $(TARGET)
+			rm -f $(TARGET) $(GRAPHICS_TARGET)
 
 
 run:

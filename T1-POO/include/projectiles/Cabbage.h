@@ -11,9 +11,10 @@ private:
     double startColumn;
 
 public:
-   Cabbage(unsigned int row, double column, double targetColumn);
+   Cabbage(unsigned int row, double column, double targetColumn, int damage);
    void update(double deltaTime);
    double getTargetColumn() const;
+   double getHeight() const;
 };
 
 #endif // CABBAGE_H

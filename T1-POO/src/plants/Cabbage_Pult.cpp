@@ -2,7 +2,7 @@
 #include <Cabbage.h>
 
 Cabbage_Pult::Cabbage_Pult(unsigned int row, unsigned column) : Plant(300, 100, row, column, 0.0) {
-    damage = 40;
+    damage = 75;
     attackInterval = 3.0;
     range = 4;
 }
@@ -10,7 +10,7 @@ Cabbage_Pult::Cabbage_Pult(unsigned int row, unsigned column) : Plant(300, 100, 
 Cabbage Cabbage_Pult::shoot(double targetColumn){
     setTimerPlant(0.0);
 
-    return Cabbage(getRow(), getColumn(), targetColumn);
+    return Cabbage(getRow(), getColumn(), targetColumn, damage);
 }
 
 void Cabbage_Pult::update(double deltaTime){
